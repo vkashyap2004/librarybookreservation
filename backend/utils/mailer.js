@@ -1,29 +1,37 @@
-const nodemailer = require('nodemailer');
 
-let transporter;
-const enabled = () => !!process.env.SMTP_HOST;
+const { Resend } = require('resend');
 
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
-    });
+let resendClient;
+
+function getResendClient() {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
   }
-  return transporter;
+  return resendClient;
 }
 
-// Never throws: a failed email must not break a reservation.
-// With no SMTP settings the email is printed to the server console instead.
 exports.sendMail = async ({ to, subject, text, html }) => {
-  if (!enabled()) {
-    console.log(`[email not configured] To: ${to} | Subject: ${subject}\n${text}\n`);
+  if (!process.env.RESEND_API_KEY) {
+    console.log(`[email not configured] To: ${to} | Subject: ${subject}`);
     return;
   }
+
   try {
-    await getTransporter().sendMail({ from: process.env.MAIL_FROM || process.env.SMTP_USER, to, subject, text, html });
+    const { data, error } = await getResendClient().emails.send({
+      from: 'Library Reservation <onboarding@resend.dev>',
+      to,
+      subject,
+      text,
+      html
+    });
+
+    if (error) {
+      console.error('Email failed:', error.message);
+      return;
+    }
+
+    console.log('Email sent successfully:', data.id);
+
   } catch (err) {
     console.error('Email failed:', err.message);
   }
