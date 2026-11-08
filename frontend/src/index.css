@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --c-navy: 18 32 58; --c-paper: 251 249 244; --c-parchment: 241 236 224; --c-surface: 255 255 255;
+    --c-chrome: 18 32 58; --c-gold-soft: 234 223 191; --c-gold-dark: 122 98 38;
+    --c-sage: 62 124 89; --c-brick: 163 58 58;
+  }
+  .dark {
+    color-scheme: dark;
+    --c-navy: 232 228 216; --c-paper: 14 22 38; --c-parchment: 24 36 58; --c-surface: 20 31 52;
+    --c-chrome: 8 14 26; --c-gold-soft: 58 51 32; --c-gold-dark: 224 196 119;
+    --c-sage: 111 191 142; --c-brick: 232 130 130;
+  }
+  body { @apply bg-paper font-sans text-navy antialiased; }
+  h1, h2, h3 { @apply font-serif; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-gold; outline-style: solid; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-navy text-paper hover:bg-navy-800; }
+  .btn-gold { @apply btn bg-gold text-white hover:opacity-90; }
+  .btn-ghost { @apply btn border border-navy/20 bg-surface text-navy hover:bg-parchment; }
+  .btn-danger { @apply btn bg-red-700 text-white hover:bg-red-800; }
+  .input { @apply w-full rounded-md border border-navy/20 bg-surface px-3 py-2 text-sm placeholder:text-navy/40 focus:border-gold; }
+  .label { @apply mb-1 block text-sm font-medium; }
+  .panel { @apply rounded-lg border border-navy/10 bg-surface; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
